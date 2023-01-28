@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstdlib>
+#include <cstdio>
 #include <queue>
 #include "merge.h"
 
@@ -26,6 +27,7 @@ uint8_t* merge(uint8_t* array_a, uint8_t* array_b,
                 }
             } else {
                 merge_buf[buf_i] = array_a[a_i];
+                a_i++;
             }
         } else {
             merge_buf[buf_i] = array_b[b_i];
@@ -34,6 +36,8 @@ uint8_t* merge(uint8_t* array_a, uint8_t* array_b,
 
         buf_i++;
     }
+
+    return merge_buf;
 }
 
 void merge_sort(uint8_t* array, size_t size) {
@@ -48,10 +52,10 @@ void merge_sort(uint8_t* array, size_t size) {
             }
         } else {
             size_t half      = size / 2;
-            size_t size_a    = array;
-            size_t size_b    = array + half;
-            uint8_t* array_a = half;
-            uint8_t* array_b = size - half;
+            uint8_t* array_a = array;
+            uint8_t* array_b = array + half;
+            size_t size_a    = half;
+            size_t size_b    = size - half;
             uint8_t* merge_buf;
 
             merge_sort(array_a, size_a);
