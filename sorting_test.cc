@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <ctime>
 #include <cstdlib>
+#include <cstring>
 #include "merge.h"
 #include "radix.h"
 
@@ -63,17 +64,28 @@ void test_sort(size_t size) {
     free(array);
 }
 
-int main() {
-    size_t max_size = 0x10000000;
-    /* printf("N,TIME\n"); */
+int main(int argc, char** argv) {
+    size_t max_size = 0x1000000;
+    
+    if (argc > 1) {
+        if (strcmp(argv[1], "--radix")) {
+            printf("N,TIME\n");
 
-    /* for (size_t i = 2; i <= max_size; i *= 2) { */
-    /*     double sort_time = time_radix_sort(i); */
-    /*     printf("%d,%lf\n", i, sort_time); */
-    /* } */
-    for (size_t i = 0; i < 10; i++) {
-        printf("--------------------------------------\n");
-        test_sort(10);
-        printf("--------------------------------------\n");
+            for (size_t i = 2; i <= max_size; i *= 2) {
+                double sort_time = time_radix_sort(i);
+                printf("%d,%lf\n", i, sort_time);
+            }
+        } else {
+            printf("N,TIME\n");
+
+            for (size_t i = 2; i <= max_size; i *= 2) {
+                double sort_time = time_merge_sort(i);
+                printf("%d,%lf\n", i, sort_time);
+            }
+        }
+
+        return 0;
+    } else {
+        return 1;
     }
 }
