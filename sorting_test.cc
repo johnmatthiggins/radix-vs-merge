@@ -44,7 +44,7 @@ double time_radix_sort(size_t size) {
 
     // Fills array with random numbers.
     new_array(array, size);
-    radix_sort(array, size);
+    radix_sort_8bit(array, size);
     clock_t end = std::clock();
 
     free(array);
@@ -66,26 +66,29 @@ void test_sort(size_t size) {
 
 int main(int argc, char** argv) {
     size_t max_size = 0x1000000;
+    int exit_code = 0;
     
     if (argc > 1) {
-        if (strcmp(argv[1], "--radix")) {
+        if (strcmp(argv[1], "--radix8") == 0) {
             printf("N,TIME\n");
 
             for (size_t i = 2; i <= max_size; i *= 2) {
                 double sort_time = time_radix_sort(i);
                 printf("%d,%lf\n", i, sort_time);
             }
-        } else {
+        } else if (strcmp(argv[1], "--merge8") == 0) {
             printf("N,TIME\n");
 
             for (size_t i = 2; i <= max_size; i *= 2) {
                 double sort_time = time_merge_sort(i);
                 printf("%d,%lf\n", i, sort_time);
             }
+        } else {
+            exit_code = 1;
         }
-
-        return 0;
     } else {
-        return 1;
+        exit_code = 1;
     }
+
+    return exit_code;
 }
