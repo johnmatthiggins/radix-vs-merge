@@ -14,11 +14,10 @@ void radix_sort_32bit(uint32_t* array, size_t size) {
     for (size_t i = 0; i < BYTES_IN_INT32; ++i) {
         for (size_t j = 0; j < size; ++j) {
             uint8_t next = slice_byte(array[j], i);
-            printf("(%d) NEXT BYTE: %x\n", j, next);
             push(queues[(size_t)next], array[j]);
         }
 
-        while (queue_index < U8_VALUE_COUNT) {
+        while (queue_index < U8_VALUE_COUNT && array_index != size) {
             // if not empty.
             if (!queues[queue_index].empty) {
                 array[array_index] = pop(queues[queue_index]);
@@ -92,7 +91,7 @@ mini_queue queue_init(size_t size) {
     return queue;
 }
 
-void push(mini_queue queue, uint32_t element) {
+void push(mini_queue& queue, uint32_t element) {
     size_t new_end;
     size_t new_start;
 
@@ -113,9 +112,12 @@ void push(mini_queue queue, uint32_t element) {
     }
 }
 
-uint32_t pop(mini_queue queue) {
+uint32_t pop(mini_queue& queue) {
     // set the new end...
     size_t new_start        = (queue.start + 1) % queue.capacity;
+
+    // Please don't pop when it's empty. This will result in
+    // undefined behavior.
     uint32_t popped_element = queue._buffer[queue.start];
     queue.start             = new_start;
 
@@ -126,7 +128,7 @@ uint32_t pop(mini_queue queue) {
     return popped_element;
 }
 
-void resize_queue(mini_queue queue, size_t size) {
+void resize_queue(mini_queue& queue, size_t size) {
     size_t i_queue       = queue.start;
     size_t i_buffer      = 0;
     uint32_t* new_buffer = (uint32_t*)malloc(sizeof(uint32_t) * size);
