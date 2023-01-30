@@ -52,18 +52,6 @@ double time_radix_sort(size_t size) {
     return (end - start) / (double)(CLOCKS_PER_SEC / 1000);
 }
 
-void test_sort(size_t size) {
-    uint8_t* array = (uint8_t*)malloc(sizeof(uint8_t) * size);
-
-    // Fills array with random numbers.
-    new_array(array, size);
-    print_array(array, size);
-    radix_sort(array, size);
-    print_array(array, size);
-
-    free(array);
-}
-
 int main(int argc, char** argv) {
     size_t max_size = 0x1000000;
     int exit_code = 0;
