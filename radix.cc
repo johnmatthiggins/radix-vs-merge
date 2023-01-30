@@ -28,15 +28,20 @@ void radix_sort_32bit(uint32_t* array, size_t size) {
         }
     }
 
+    for (size_t i = 0; i < 256; ++i) {
+        free(queues[i]._buffer);
+    }
+
     free(queues);
 }
 
 mini_queue* create_queues(size_t capacity) {
     mini_queue* queues =
         (mini_queue*)calloc(256, sizeof(mini_queue));
-    mini_queue queue = queue_init(capacity);
+    mini_queue queue;
 
     for (size_t i = 0; i < 256; ++i) {
+        mini_queue queue = queue_init(capacity);
         queues[i] = queue;
     }
 
@@ -99,6 +104,7 @@ void push(mini_queue& queue, uint32_t element) {
         new_end = (queue.end + 1) % queue.capacity;
         queue._buffer[queue.start] = element;
         queue.empty                = false;
+        queue.end = new_end;
     } else {
         // if it's not empty and the start and end match, that means
         // it is full.
@@ -108,7 +114,8 @@ void push(mini_queue& queue, uint32_t element) {
         }
 
         new_end = (queue.end + 1) % queue.capacity;
-        queue._buffer[queue.start] = element;
+        queue._buffer[queue.end] = element;
+        queue.end = new_end;
     }
 }
 
@@ -146,5 +153,6 @@ void resize_queue(mini_queue& queue, size_t size) {
     queue.end     = i_buffer;
 
     free(queue._buffer);
-    queue._buffer = new_buffer;
+    queue._buffer  = new_buffer;
+    queue.capacity = size;
 }
