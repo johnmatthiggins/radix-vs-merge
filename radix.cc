@@ -13,8 +13,8 @@ void radix_sort_32bit(uint32_t* array, size_t size) {
     
     for (size_t i = 0; i < BYTES_IN_INT32; ++i) {
         for (size_t j = 0; j < size; ++j) {
-            uint8_t next = slice_byte(array[j], i);
-            push(queues[(size_t)next], array[j]);
+            size_t next = ((size_t)slice_byte(array[j], i - 1)) & 0xFFUL;
+            push(queues[next], array[j]);
         }
 
         while (queue_index < U8_VALUE_COUNT && array_index != size) {
@@ -140,13 +140,14 @@ void resize_queue(mini_queue& queue, size_t size) {
     size_t i_buffer      = 0;
     uint32_t* new_buffer = (uint32_t*)malloc(sizeof(uint32_t) * size);
 
-    while (i_queue != queue.end) {
+    do {
+        printf("ITERATION %d\n", i_buffer);
         new_buffer[i_buffer] = queue._buffer[i_queue];
 
         // Increment but make sure we never go past capacity.
         i_queue = (i_queue + 1) % queue.capacity;
         i_buffer++;
-    }
+    } while (i_queue != queue.end);
 
     // Realign start and end.
     queue.start   = 0;

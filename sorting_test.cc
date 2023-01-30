@@ -14,11 +14,21 @@ void print_array(uint8_t* array, size_t size) {
     printf("]\n");
 }
 
+void sort_checker8(uint8_t* array, size_t size) {
+    for (size_t i = 1; i < size; ++i) {
+        if (array[i - 1] > array[i]) {
+            printf("THIS ARRAY IS NOT SORTED...\n");
+            printf("%x is greater than %x...\n", array[i - 1], array[i]);
+            break;
+        }
+    }
+}
+
 void sort_checker32(uint32_t* array, size_t size) {
     for (size_t i = 1; i < size; ++i) {
         if (array[i - 1] > array[i]) {
             printf("THIS ARRAY IS NOT SORTED...\n");
-            printf("%d is greater than %d...\n", array[i - 1], array[i]);
+            printf("%x is greater than %x...\n", array[i - 1], array[i]);
             break;
         }
     }
@@ -27,7 +37,7 @@ void sort_checker32(uint32_t* array, size_t size) {
 void print_array_32bit(uint32_t* array, size_t size) {
     printf("[ ");
     for (size_t i = 0; i < size; ++i) {
-        printf("%d ", array[i]);
+        printf("%x ", array[i]);
     }
     printf("]\n");
 }
@@ -73,6 +83,7 @@ double time_radix_sort(size_t size) {
     // Fills array with random numbers.
     new_array(array, size);
     radix_sort_8bit(array, size);
+    sort_checker8(array, size);
     clock_t end = std::clock();
 
     free(array);
@@ -124,7 +135,7 @@ int main(int argc, char** argv) {
             /*     printf("%d,%lf\n", i, sort_time); */
             /* } */
 
-            time_radix32_sort(16);
+            time_radix32_sort(0x10);
         } else {
             exit_code = 1;
         }
