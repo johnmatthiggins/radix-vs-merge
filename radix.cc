@@ -11,13 +11,13 @@ void radix_sort_32bit(uint32_t* array, size_t size) {
     size_t queue_index = 0;
     size_t array_index = 0;
     
-    for (size_t i = 0; i < BYTES_IN_INT32; ++i) {
+    for (size_t i = 0; i < sizeof(uint32_t); ++i) {
         for (size_t j = 0; j < size; ++j) {
-            size_t next = ((size_t)slice_byte(array[j], i - 1)) & 0xFFUL;
+            size_t next = (size_t)slice_byte(array[j], i);
             push(queues[next], array[j]);
         }
 
-        while (queue_index < U8_VALUE_COUNT && array_index != size) {
+        while (queue_index < U8_VALUE_COUNT) {
             // if not empty.
             if (!queues[queue_index].empty) {
                 array[array_index] = pop(queues[queue_index]);
@@ -76,7 +76,7 @@ uint8_t slice_byte(uint32_t word, size_t index) {
     size_t adj_index = index % 4;
 
     // shift the eight ones into the correct position.
-    uint32_t mask = 0xFF << (adj_index * 8);
+    uint32_t mask = 0xFFUL << (adj_index * 8);
     uint8_t bits = (uint8_t)((mask & word) >> (adj_index * 8));
 
     return bits;
@@ -141,7 +141,6 @@ void resize_queue(mini_queue& queue, size_t size) {
     uint32_t* new_buffer = (uint32_t*)malloc(sizeof(uint32_t) * size);
 
     do {
-        printf("ITERATION %d\n", i_buffer);
         new_buffer[i_buffer] = queue._buffer[i_queue];
 
         // Increment but make sure we never go past capacity.

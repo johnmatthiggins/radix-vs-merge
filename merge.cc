@@ -66,6 +66,8 @@ void merge_sort(uint8_t* array, size_t size) {
             for (size_t i = 0; i < size; ++i) {
                 array[i] = merge_buf[i];
             }
+
+            free(merge_buf);
         }
     }
 }

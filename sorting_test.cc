@@ -9,7 +9,7 @@
 void print_array(uint8_t* array, size_t size) {
     printf("[ ");
     for (size_t i = 0; i < size; ++i) {
-        printf("%d ", array[i]);
+        printf("%x ", array[i]);
     }
     printf("]\n");
 }
@@ -37,7 +37,7 @@ void sort_checker32(uint32_t* array, size_t size) {
 void print_array_32bit(uint32_t* array, size_t size) {
     printf("[ ");
     for (size_t i = 0; i < size; ++i) {
-        printf("%x ", array[i]);
+        printf("%#08x ", array[i]);
     }
     printf("]\n");
 }
@@ -97,10 +97,10 @@ double time_radix32_sort(size_t size) {
 
     // Fills array with random numbers.
     new_array_32bit(array, size);
-    print_array_32bit(array, size);
+    /* print_array_32bit(array, size); */
     radix_sort_32bit(array, size);
-    print_array_32bit(array, size);
-    sort_checker32(array, size);
+    /* print_array_32bit(array, size); */
+    /* sort_checker32(array, size); */
     clock_t end = std::clock();
 
     free(array);
@@ -109,7 +109,7 @@ double time_radix32_sort(size_t size) {
 }
 
 int main(int argc, char** argv) {
-    size_t max_size = 0x1000000;
+    size_t max_size = 1073741824;
     int exit_code = 0;
     
     if (argc > 1) {
@@ -128,14 +128,12 @@ int main(int argc, char** argv) {
                 printf("%d,%lf\n", i, sort_time);
             }
         } else if (strcmp(argv[1], "--radix32") == 0) {
-            /* printf("N,TIME\n"); */
+            printf("N,TIME\n");
 
-            /* for (size_t i = 2; i <= max_size; i *= 2) { */
-            /*     double sort_time = time_radix32_sort(i); */
-            /*     printf("%d,%lf\n", i, sort_time); */
-            /* } */
-
-            time_radix32_sort(0x10);
+            for (size_t i = 2; i <= max_size; i *= 2) {
+                double sort_time = time_radix32_sort(i);
+                printf("%d,%lf\n", i, sort_time);
+            }
         } else {
             exit_code = 1;
         }
