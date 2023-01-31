@@ -76,6 +76,20 @@ double time_merge_sort(size_t size) {
     return (end - start) / (double)(CLOCKS_PER_SEC / 1000);
 }
 
+double time_merge32_sort(size_t size) {
+    clock_t start = std::clock();
+    uint32_t* array = (uint32_t*)malloc(sizeof(uint32_t) * size);
+
+    // Fills array with random numbers.
+    new_array_32bit(array, size);
+    merge_sort32(array, size);
+    clock_t end = std::clock();
+
+    free(array);
+
+    return (end - start) / (double)(CLOCKS_PER_SEC / 1000);
+}
+
 double time_radix_sort(size_t size) {
     clock_t start = std::clock();
     uint8_t* array = (uint8_t*)malloc(sizeof(uint8_t) * size);
@@ -109,7 +123,7 @@ double time_radix32_sort(size_t size) {
 }
 
 int main(int argc, char** argv) {
-    size_t max_size = 1073741824;
+    size_t max_size = 134217728;
     int exit_code = 0;
     
     if (argc > 1) {
@@ -132,6 +146,13 @@ int main(int argc, char** argv) {
 
             for (size_t i = 2; i <= max_size; i *= 2) {
                 double sort_time = time_radix32_sort(i);
+                printf("%d,%lf\n", i, sort_time);
+            }
+        } else if (strcmp(argv[1], "--merge32") == 0) {
+            printf("N,TIME\n");
+
+            for (size_t i = 2; i <= max_size; i *= 2) {
+                double sort_time = time_merge32_sort(i);
                 printf("%d,%lf\n", i, sort_time);
             }
         } else {

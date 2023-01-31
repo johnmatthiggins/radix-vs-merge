@@ -7,11 +7,12 @@ static const size_t U8_VALUE_COUNT = 256;
 static const size_t BYTES_IN_INT32 = 4;
 
 void radix_sort_32bit(uint32_t* array, size_t size) {
-    mini_queue* queues = create_queues(8);
+    // Create 256 queues with a minimum capacity of 8 elements.
+    mini_queue* queues = create_queues(16);
     size_t queue_index = 0;
     size_t array_index = 0;
     
-    for (size_t i = 0; i < sizeof(uint32_t); ++i) {
+    for (size_t i = 0; i < BYTES_IN_INT32; ++i) {
         for (size_t j = 0; j < size; ++j) {
             size_t next = (size_t)slice_byte(array[j], i);
             push(queues[next], array[j]);
@@ -153,6 +154,7 @@ void resize_queue(mini_queue& queue, size_t size) {
     queue.end     = i_buffer;
 
     free(queue._buffer);
+
     queue._buffer  = new_buffer;
     queue.capacity = size;
 }
