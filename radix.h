@@ -4,33 +4,26 @@
 #include <cstdint>
 #include <cstdlib>
 
-/* typedef struct { */
-/*     size_t    start; */
-/*     size_t    end; */
-/*     size_t    capacity; */
-/*     uint32_t* _buffer; */
-/*     bool      empty; */
-/* } mini_queue; */
-
 static const size_t DEFAULT_QUEUE_CAPACITY = 16;
 
-class mini_queue {
+template <class T>
+class MiniQueue {
 private:
-    size_t _start;
-    size_t _end;
-    size_t _capacity;
-    uint32_t* _buffer;
+    size_t  _start;
+    size_t  _end;
+    size_t  _capacity;
+    T*      _buffer;
+    bool    _empty;
 
     void _resize_queue(size_t size);
 
 public:
-    bool empty;
+    MiniQueue<T>(size_t capacity = DEFAULT_QUEUE_CAPACITY);
+    ~MiniQueue();
 
-    mini_queue(size_t capacity = DEFAULT_QUEUE_CAPACITY);
-    ~mini_queue();
-
-    void push(uint32_t element);
-    uint32_t pop();
+    bool empty();
+    void push(T element);
+    T pop();
     size_t end();
     size_t start();
 };
