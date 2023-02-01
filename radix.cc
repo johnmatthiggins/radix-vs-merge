@@ -8,20 +8,23 @@ static const size_t BYTES_IN_INT32 = 4;
 
 void radix_sort_32bit(uint32_t* array, size_t size) {
     // Create 256 queues with a minimum capacity of 8 elements.
-    mini_queue* queues = create_queues(16);
-    size_t queue_index = 0;
-    size_t array_index = 0;
+    mini_queue* queues = new mini_queue[256];
+    size_t queue_index;
+    size_t array_index;
     
     for (size_t i = 0; i < BYTES_IN_INT32; ++i) {
+        queue_index = 0;
+        array_index = 0;
+
         for (size_t j = 0; j < size; ++j) {
             size_t next = (size_t)slice_byte(array[j], i);
-            push(queues[next], array[j]);
+            queues[next].push(array[j]);
         }
 
         while (queue_index < U8_VALUE_COUNT) {
             // if not empty.
             if (!queues[queue_index].empty) {
-                array[array_index] = pop(queues[queue_index]);
+                array[array_index] = queues[queue_index].pop();
                 array_index++;
             } else {
                 queue_index++;
@@ -29,24 +32,7 @@ void radix_sort_32bit(uint32_t* array, size_t size) {
         }
     }
 
-    for (size_t i = 0; i < 256; ++i) {
-        free(queues[i]._buffer);
-    }
-
-    free(queues);
-}
-
-mini_queue* create_queues(size_t capacity) {
-    mini_queue* queues =
-        (mini_queue*)calloc(256, sizeof(mini_queue));
-    mini_queue queue;
-
-    for (size_t i = 0; i < 256; ++i) {
-        mini_queue queue = queue_init(capacity);
-        queues[i] = queue;
-    }
-
-    return queues;
+    delete [] queues;
 }
 
 void radix_sort_8bit(uint8_t* array, size_t size) {
@@ -83,78 +69,78 @@ uint8_t slice_byte(uint32_t word, size_t index) {
     return bits;
 }
 
-mini_queue queue_init(size_t size) {
-    uint32_t* buffer = (uint32_t*)malloc(sizeof(uint32_t) * size);
+mini_queue::mini_queue(size_t capacity) {
+    uint32_t* buffer = (uint32_t*)malloc(sizeof(uint32_t) * capacity);
 
-    mini_queue queue = mini_queue {
-        .start    = 0,
-        .end      = 0,
-        .capacity = size,
-        ._buffer  = buffer,
-        .empty    = true,
-    };
-
-    return queue;
+    this->_start    = 0;
+    this->_end      = 0;
+    this->_capacity = capacity;
+    this->_buffer   = buffer;
+    this->empty     = true;
 }
 
-void push(mini_queue& queue, uint32_t element) {
+mini_queue::~mini_queue() {
+    free(this->_buffer);
+}
+
+void mini_queue::push(uint32_t element) {
     size_t new_end;
     size_t new_start;
 
-    if (queue.empty) {
-        new_end = (queue.end + 1) % queue.capacity;
-        queue._buffer[queue.start] = element;
-        queue.empty                = false;
-        queue.end = new_end;
+    if (this->empty) {
+        new_end = (this->_end + 1) % this->_capacity;
+        this->_buffer[this->_start] = element;
+        this->empty                = false;
+        this->_end = new_end;
     } else {
         // if it's not empty and the start and end match, that means
         // it is full.
-        if (queue.start == queue.end) {
+        if (this->_start == this->_end) {
             // Multiply by 2 because we want to avoid doing this often.
-            resize_queue(queue, queue.capacity << 1);
+            this->_resize_queue(this->_capacity << 1);
         }
 
-        new_end = (queue.end + 1) % queue.capacity;
-        queue._buffer[queue.end] = element;
-        queue.end = new_end;
+        new_end = (this->_end + 1) % this->_capacity;
+        this->_buffer[this->_end] = element;
+        this->_end = new_end;
     }
 }
 
-uint32_t pop(mini_queue& queue) {
+uint32_t mini_queue::pop() {
     // set the new end...
-    size_t new_start        = (queue.start + 1) % queue.capacity;
+    size_t new_start        = (this->_start + 1) % this->_capacity;
 
     // Please don't pop when it's empty. This will result in
     // undefined behavior.
-    uint32_t popped_element = queue._buffer[queue.start];
-    queue.start             = new_start;
+    uint32_t popped_element = this->_buffer[this->_start];
+    this->_start             = new_start;
 
-    if (new_start == queue.end) {
-        queue.empty = true;
+    if (new_start == this->_end) {
+        this->empty = true;
     }
 
     return popped_element;
 }
 
-void resize_queue(mini_queue& queue, size_t size) {
-    size_t i_queue       = queue.start;
+void mini_queue::_resize_queue(size_t size) {
+    size_t i_queue       = this->_start;
     size_t i_buffer      = 0;
     uint32_t* new_buffer = (uint32_t*)malloc(sizeof(uint32_t) * size);
 
     do {
-        new_buffer[i_buffer] = queue._buffer[i_queue];
+        new_buffer[i_buffer] = this->_buffer[i_queue];
 
         // Increment but make sure we never go past capacity.
-        i_queue = (i_queue + 1) % queue.capacity;
+        i_queue = (i_queue + 1) % this->_capacity;
         i_buffer++;
-    } while (i_queue != queue.end);
+    } while (i_queue != this->_end);
 
     // Realign start and end.
-    queue.start   = 0;
-    queue.end     = i_buffer;
+    this->_start   = 0;
+    this->_end     = i_buffer;
 
-    free(queue._buffer);
+    free(this->_buffer);
 
-    queue._buffer  = new_buffer;
-    queue.capacity = size;
+    this->_buffer   = new_buffer;
+    this->_capacity = size;
 }

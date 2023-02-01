@@ -111,10 +111,8 @@ double time_radix32_sort(size_t size) {
 
     // Fills array with random numbers.
     new_array_32bit(array, size);
-    /* print_array_32bit(array, size); */
     radix_sort_32bit(array, size);
-    /* print_array_32bit(array, size); */
-    /* sort_checker32(array, size); */
+    sort_checker32(array, size);
     clock_t end = std::clock();
 
     free(array);
