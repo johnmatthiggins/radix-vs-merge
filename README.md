@@ -15,9 +15,3 @@ Both radix sort and merge sort have been optimized a little bit. First, in
 order to eliminate extra calls to dynamic memory allocation, I have given
 merge sort a single buffer in which it will store elements before performing
 a merge.
-
-Radix sort has been optimized by changing the queue that was being used. I first
-tried to implement radix sort with C++'s `std::queue` class but the performance was dreadful.
-To fix this problem, I implemented a class called `MiniQueue` that contains a minimal queue
-that sticks to using just a single buffer to store elements along with `start` and `end` values
-to determine where to `pop()` and where to `push()`.
