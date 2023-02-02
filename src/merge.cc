@@ -3,43 +3,46 @@
 #include <cstdio>
 #include "merge.h"
 
-uint8_t* merge(uint8_t* array_a, uint8_t* array_b,
-               size_t size_a, size_t size_b) {
+void merge(uint8_t* array_a, uint8_t* array_b,
+                  size_t size_a, size_t size_b, uint8_t* merge_buffer) {
     size_t a_i = 0;
     size_t b_i = 0;
-    size_t buf_i = 0;
-    size_t buf_length = size_b + size_a;
+    size_t buffer_i = 0;
+    size_t buffer_length = size_b + size_a;
 
-    // Create our buffer that we will use for the merge operation.
-    uint8_t* merge_buf =
-        (uint8_t*)malloc(sizeof(uint8_t) * buf_length);
-
-    while (buf_i < buf_length) {
+    while (buffer_i < buffer_length) {
         if (a_i != size_a) {
             if (b_i != size_b) {
                 if (array_a[a_i] < array_b[b_i]) {
-                    merge_buf[buf_i] = array_a[a_i];
+                    merge_buffer[buffer_i] = array_a[a_i];
                     a_i++;
                 } else {
-                    merge_buf[buf_i] = array_b[b_i];
+                    merge_buffer[buffer_i] = array_b[b_i];
                     b_i++;
                 }
             } else {
-                merge_buf[buf_i] = array_a[a_i];
+                merge_buffer[buffer_i] = array_a[a_i];
                 a_i++;
             }
         } else {
-            merge_buf[buf_i] = array_b[b_i];
+            merge_buffer[buffer_i] = array_b[b_i];
             b_i++;
         }
 
-        buf_i++;
+        buffer_i++;
     }
-
-    return merge_buf;
 }
 
 void merge_sort(uint8_t* array, size_t size) {
+    uint8_t* buffer = (uint8_t*)malloc(sizeof(uint8_t) * size);
+
+    merge_sort8_recursive(array, size, buffer);
+
+    free(buffer);
+}
+
+void merge_sort8_recursive(
+        uint8_t* array, size_t size, uint8_t* merge_buffer) {
     uint8_t tmp;
 
     if (size > 1) {
@@ -55,18 +58,15 @@ void merge_sort(uint8_t* array, size_t size) {
             uint8_t* array_b = array + half;
             size_t size_a    = half;
             size_t size_b    = size - half;
-            uint8_t* merge_buf;
 
-            merge_sort(array_a, size_a);
-            merge_sort(array_b, size_b);
+            merge_sort8_recursive(array_a, size_a, merge_buffer);
+            merge_sort8_recursive(array_b, size_b, merge_buffer + half);
 
-            merge_buf = merge(array_a, array_b, size_a, size_b);
+            merge(array_a, array_b, size_a, size_b, merge_buffer);
 
             for (size_t i = 0; i < size; ++i) {
-                array[i] = merge_buf[i];
+                array[i] = merge_buffer[i];
             }
-
-            free(merge_buf);
         }
     }
 }
