@@ -3,3 +3,6 @@ build:
 
 run:
 	./run.sh
+
+show:
+	./plot.py
