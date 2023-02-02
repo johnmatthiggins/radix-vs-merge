@@ -1,5 +1,5 @@
 build:
-	g++ src/*.cc -o main
+	g++ src/*.cc -o main -O3
 
 run:
 	./run.sh
