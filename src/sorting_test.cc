@@ -121,7 +121,7 @@ double time_radix32_sort(size_t size) {
 }
 
 int main(int argc, char** argv) {
-    size_t max_size = 674217728;
+    size_t max_size = 0x40000000;
     int exit_code = 0;
     
     if (argc > 1) {
