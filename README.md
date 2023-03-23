@@ -12,6 +12,7 @@ will range from sizes of 2^1 to 2^30.
 ![](results.png)
 
 Here are the results of running the sorting algorithms on randomized arrays starting at N = 2^1 all the way to N = 2^30.
+Above you can see a simple graph with linear scaling for x and y, and below you can see all the timing data in a fancy markdown table.
 
 N           |  radix-TIME    |  radix32-TIME  |  merge-TIME    |  merge32-TIME
 ------------|----------------|----------------|----------------|---------------
