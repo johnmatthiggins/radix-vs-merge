@@ -46,3 +46,6 @@ N           |  radix-TIME    |  radix32-TIME  |  merge-TIME    |  merge32-TIME
 268435456   |  4315.325000   |  10005.499000  |  21392.694000  |  37418.750000
 536870912   |  8646.464000   |  20381.668000  |  43468.269000  |  77373.655000
 1073741824  |  17323.420000  |  41682.340000  |  88291.346000  |  159929.789000
+
+As you can see, both radix sort algorithms were much faster than the merge sort algorithms. The 8-bit merge sort algorithm even
+got beat by the 32 bit radix sort.
